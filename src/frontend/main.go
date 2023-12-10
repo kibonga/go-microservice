@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-const basePath = "./src/frontend/templates/"
+const basePath = "./templates/"
 
 func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -28,8 +28,6 @@ func render(w http.ResponseWriter, t string) {
 		fmt.Sprintf("%sheader.partial.gohtml", basePath),
 		fmt.Sprintf("%sfooter.partial.gohtml", basePath),
 	}
-
-	fmt.Println(partials)
 
 	var templates []string
 	templates = append(templates, fmt.Sprintf("%s%s", basePath, t))
