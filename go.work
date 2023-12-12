@@ -1,4 +1,5 @@
 go 1.21.4
 
 use ./src/broker
+use ./src/frontend
 use .
