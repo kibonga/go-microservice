@@ -1,0 +1,15 @@
+Query methods
+1. QueryContext - returns (*Rows, error)
+- can throw error
+2. QueryRowContext - returns (*Row)
+- doesn't throw error until Scan method is called
+- returns at most single row
+- always returns non nil value
+3. ExecContext
+- executes a query without returning any rows
+
+Helper methods
+1. Next
+- prepares the next result row for reading with scan
+2. Scan
+- copies the columns of the current row into the values pointed by the dest

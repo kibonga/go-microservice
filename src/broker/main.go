@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-const port = "4209"
+const port = "420"
 
 type Config struct{}
 

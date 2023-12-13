@@ -1,0 +1,19 @@
+Basically context is primarily used for timeouts/deadlines
+eg. we're calling a 3rd party API function, which takes too long, we can set deadline
+if it exceeds the limit, an error can be thrown
+
+Example
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+Context.Background()
+- this is a top level context that is used in main fn, it is never cancelled,
+has no values and no deadlines
+
+Context defines the scope of a
+- request or operation,
+- carrying deadlines,
+- cancellation signals and
+other request-scoped values across API boundaries and between processes
+
+This includes incoming requests to server, outgoing calls to server

@@ -1,0 +1,21 @@
+
+
+1. Same-Origin policy
+Browsers implement same-origin policy, which ensure that scripts running on web page(origin)
+cannot access data from another origin
+
+2. CORS - (cross-origin resource sharing)
+Allows the nerf of the same-origin policies under controlled conditions
+Server can specify who can, and under what conditions access resources
+
+3. Default Access Restriction
+By default a script can make a HTTP request to different domain
+However the browser restricts the script to access response headers, unless the server
+explicitly allowed it
+If a header is not in the "Exposed headers" list, the script cannot access that header
+
+
+/////////////////
+Allow Credentials
+By default when making cross-origin HTTP requests, web apps do not send any credentials(cookies, HTTP auth, SSL certs) in the request
+When AllowCredentials is set, the CORS config on the server will accept any relevant credentials from the browser

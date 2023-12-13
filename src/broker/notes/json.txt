@@ -1,8 +1,0 @@
-Marshal and Unmarshal convert a string into JSON and vice versa.
-Encoding and decoding convert a stream into JSON and vice versa.
-
-JSON -> String: Marshal
-String -> JSON: Unmarshal
-
-JSON -> Stream: Encode
-Stream -> JSON: Decode

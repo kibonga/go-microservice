@@ -1,7 +1,0 @@
-// Go-chi
-1. Rooting package
-    go get github.com/go-chi/chi/v5
-2. Middleware
-    go get github.com/go-chi/chi/v5/middleware
-3. CORS
-    go get github.com/go-chi/chi/cors

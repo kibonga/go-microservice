@@ -1,0 +1,18 @@
+Marshal and Unmarshal convert a string into JSON and vice versa.
+Encoding and decoding convert a stream into JSON and vice versa.
+
+JSON -> String: Marshal
+String -> JSON: Unmarshal
+
+JSON -> Stream: Encode
+Stream -> JSON: Decode
+
+When defining JSON models for there is a security pattern
+when we don't want some sensitive data to be encoded/decoded
+eg. when dealing with passwords
+    Password string `json:"-"`
+
+Omitting fields
+- we can omit values if the field is empty
+eg.
+    FirstName string `json:"first_name,omitempty"`
