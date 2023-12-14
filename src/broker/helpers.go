@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 )
@@ -17,7 +18,6 @@ type jsonResp struct {
 const maxBytes = 1048576
 
 func (app *Config) readJSON(w http.ResponseWriter, r *http.Request, data any) error {
-
 	// sets the max size of bytes per request, if exceeded error returned
 	r.Body = http.MaxBytesReader(w, r.Body, int64(maxBytes))
 
@@ -27,7 +27,7 @@ func (app *Config) readJSON(w http.ResponseWriter, r *http.Request, data any) er
 		return err
 	}
 
-	// check if single json value is sent, this is done by checking if we reached EOF
+	// check if single helpers value is sent, this is done by checking if we reached EOF
 	// tries to decode the next JSON-encoded value from decoder into an empty struct
 	err = decoder.Decode(&struct{}{})
 	if err != io.EOF {
@@ -52,7 +52,7 @@ func (app *Config) writeJSON(w http.ResponseWriter, status int, data any, header
 		}
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/helpers")
 	_, err = w.Write(out)
 	if err != nil {
 		return err
@@ -74,4 +74,8 @@ func (app *Config) errorJSON(w http.ResponseWriter, err error, status ...int) er
 	}
 
 	return app.writeJSON(w, statusCode, resp)
+}
+
+func DoesThisWork() {
+	fmt.Println("Does this work")
 }

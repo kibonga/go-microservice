@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"modules/helpers"
 	"net/http"
 	"os"
 )
@@ -13,6 +14,8 @@ type Config struct{}
 
 func main() {
 	app := &Config{}
+	app123 := &helpers.Config123{}
+	app123.ReadJSON()
 
 	path, err := os.Getwd()
 	if err != nil {

@@ -2,11 +2,11 @@ package main
 
 import (
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"net/http"
 )
 
-func (app *Config) routes() {
+func (app *Config) routes() http.Handler {
 	// Create a new chi router
 	mux := chi.NewRouter()
 
@@ -22,5 +22,5 @@ func (app *Config) routes() {
 		MaxAge:           300,
 	}))
 
-	mux.Use(middleware.Heartbeat("ping"))
+	return mux
 }

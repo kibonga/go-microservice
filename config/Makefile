@@ -1,6 +1,7 @@
 # name of the binaries (see dockerfile)
 FRONTEND_BINARY=frontend
 BROKER_BINARY=broker_app
+AUTH_BINARY=auth_app
 
 # starts all containers in the background without force build
 up:
@@ -9,7 +10,7 @@ up:
 	@echo "Docker images started"
 
 # stops docker-compose (if running), builds all projects and starts the containers in the background
-up_build:
+up_build: build_broker build_auth
 	@echo "Stopping docker images (if running)"
 	docker-compose down
 	@echo "Building (when required) and starting docker images (detached, force)"
@@ -26,6 +27,11 @@ build_broker:
 	@echo "Building broker app binary..."
 	cd ../src/broker && env CGO_ENABLED=0 go build -o ${BROKER_BINARY} .
 	@echo "Finished building broker app"
+
+build_auth:
+	@echo "Building auth app binary..."
+	cd ../src/auth && env CGO_ENABLED=0 go build -o ${AUTH_BINARY} .
+	@echo "Finished building auth app"
 
 # builds the frontend app as linux executable
 build_front:

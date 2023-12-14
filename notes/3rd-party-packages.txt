@@ -5,3 +5,6 @@
     go get github.com/go-chi/chi/v5/middleware
 3. CORS
     go get github.com/go-chi/cors
+
+ // Postgres
+ 1. 

@@ -3,6 +3,7 @@ go 1.21.4
 use (
 	./src/broker
 	./src/frontend
-	src/auth
+	./src/auth
+	./src/modules
 	.
 )

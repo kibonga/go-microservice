@@ -21,15 +21,15 @@ type Models struct {
 
 // User is a structure that represents user from the database
 type User struct {
-	Id        int    `json:"id"`
-	Email     string `json:"email"`
-	FirstName string `json:"first_name,omitempty"`
-	LastName  string `json:"last_name,omitempty"`
+	Id        int    `helpers:"id"`
+	Email     string `helpers:"email"`
+	FirstName string `helpers:"first_name,omitempty"`
+	LastName  string `helpers:"last_name,omitempty"`
 	// "-", this means that this field should not be encoded, security reasons
-	Password  string    `json:"-"`
-	Active    int       `json:"active"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Password  string    `helpers:"-"`
+	Active    int       `helpers:"active"`
+	CreatedAt time.Time `helpers:"created_at"`
+	UpdatedAt time.Time `helpers:"updated_at"`
 }
 
 // New creates a new instance of the data package
