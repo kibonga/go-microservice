@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func (app *Config) Routes() http.Handler {
+func (app *Config) routes() http.Handler {
 
 	// create new chi router
 	mux := chi.NewRouter()

@@ -1,16 +1,17 @@
 package main
 
 import (
+	"modules/helpers"
 	"net/http"
 )
 
 func (app *Config) Broker(w http.ResponseWriter, r *http.Request) {
-	payload := jsonResp{
+	payload := helpers.JsonResp{
 		Error:   false,
 		Message: "hello from broker",
 	}
 
-	_ = app.writeJSON(w, http.StatusOK, payload)
+	_ = helpers.WriteJson(w, http.StatusOK, payload)
 
 	//out, _ := helpers.MarshalIndent(payload, "", "\t")
 	//w.Header().Set("Content-Type", "application/helpers")

@@ -3,9 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
-	"modules/helpers"
 	"net/http"
-	"os"
 )
 
 const port = "420"
@@ -14,28 +12,17 @@ type Config struct{}
 
 func main() {
 	app := &Config{}
-	app123 := &helpers.Config123{}
-	app123.ReadJSON()
 
-	path, err := os.Getwd()
-	if err != nil {
-		return
-	}
-	fmt.Println("dir", path)
-
-	log.Printf("starting broker service on port %s", port)
-
-	// create server
+	// Create new instance of HTTP server
 	server := &http.Server{
 		Addr:    fmt.Sprintf(":%s", port),
-		Handler: app.Routes(),
+		Handler: app.routes(),
 	}
 
-	// start the server
-	fmt.Println("starting server")
-	err = server.ListenAndServe()
+	// Start the server
+	log.Printf("starting broker service on port %s", port)
+	err := server.ListenAndServe()
 	if err != nil {
 		log.Panic(err)
 	}
-	fmt.Println("do i get here")
 }

@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"modules/helpers"
 	"net/http"
 )
 
@@ -31,8 +30,6 @@ func main() {
 		Addr:    fmt.Sprintf(":%d", webPort),
 		Handler: app.routes(),
 	}
-
-	helpers.FooJson()
 
 	fmt.Println("Starting auth server...")
 	err := server.ListenAndServe()
