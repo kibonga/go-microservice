@@ -12,6 +12,15 @@ type authReq struct {
 	Password string `json:"password"`
 }
 
+func (app *Config) Testing(w http.ResponseWriter, r *http.Request) {
+	resp := helpers.JsonResp{
+		Error:   false,
+		Message: fmt.Sprintf("testing is a success"),
+	}
+
+	helpers.WriteJson(w, http.StatusAccepted, resp)
+}
+
 func (app *Config) Authenticate(w http.ResponseWriter, r *http.Request) {
 	var payload authReq
 	err := helpers.ReadSingleJson(w, r, &payload)
