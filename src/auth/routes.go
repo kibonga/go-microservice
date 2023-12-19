@@ -28,7 +28,5 @@ func (app *Config) routes() http.Handler {
 	// Add Auth route handler
 	mux.Post("/auth", app.Authenticate)
 
-	mux.Get("/", app.Testing)
-
 	return mux
 }

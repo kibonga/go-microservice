@@ -6,6 +6,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	_ "github.com/jackc/pgconn"
+	_ "github.com/jackc/pgx/v4"
+	_ "github.com/jackc/pgx/v4/stdlib"
 )
 
 // Define a port to listen to
@@ -21,10 +25,12 @@ type Config struct {
 func main() {
 	// Connect to database
 	conn := connectToDb()
+	log.Printf("connecting to db %v\n", conn)
 	app := Config{
 		DB:     conn,
 		Models: data.New(conn),
 	}
+	log.Printf("created app config %v\n", app)
 
 	var server = &http.Server{
 		Addr:    fmt.Sprintf(":%d", webPort),

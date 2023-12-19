@@ -14,7 +14,7 @@ const dbTimeout = time.Second * 3
 
 var db *sql.DB
 
-// Models is a structure that wraps all the available types for the app
+// Models is a structure that is a wrapper for all method calls and types
 type Models struct {
 	User User
 }
@@ -237,6 +237,8 @@ func (u *User) ResetPassword(password string) error {
 
 // Check if users password matches bcrypt encrypted password
 func (u *User) PasswordMatches(plainTextPassword string) (bool, error) {
+	log.Println("hash=", u.Password)
+	log.Println("pass=", plainTextPassword)
 	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(plainTextPassword))
 	if err != nil {
 		switch {

@@ -3,50 +3,46 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"modules/helpers"
 	"net/http"
 )
 
-type authReq struct {
+type AuthReq struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-func (app *Config) Testing(w http.ResponseWriter, r *http.Request) {
-	resp := helpers.JsonResp{
-		Error:   false,
-		Message: fmt.Sprintf("testing is a success"),
-	}
-
-	helpers.WriteJson(w, http.StatusAccepted, resp)
-}
-
 func (app *Config) Authenticate(w http.ResponseWriter, r *http.Request) {
-	var payload authReq
-	err := helpers.ReadSingleJson(w, r, &payload)
+	var req AuthReq
+
+	// Read request body(stream) into json variable
+	err := helpers.ReadSingleJson(w, r, &req)
 	if err != nil {
 		helpers.ErrorJson(w, err, http.StatusBadRequest)
 		return
 	}
 
-	// Validate user against database
-	user, err := app.Models.User.GetByEmail(payload.Email)
+	// Get the user by email from json variable
+	user, err := app.Models.User.GetByEmail(req.Email)
 	if err != nil {
+		log.Println("failed to get by email")
 		helpers.ErrorJson(w, errors.New("invalid credentials"), http.StatusBadRequest)
 		return
 	}
 
-	valid, err := app.Models.User.PasswordMatches(payload.Password)
+	// Validate if passwords match
+	valid, err := user.PasswordMatches(req.Password)
 	if err != nil || !valid {
+		log.Println("failed to match passwords")
 		helpers.ErrorJson(w, errors.New("invalid credentials"), http.StatusBadRequest)
 		return
 	}
 
-	resp := helpers.JsonResp{
+	// Send back response
+	helpers.WriteJson(w, http.StatusAccepted, &helpers.JsonResp{
 		Error:   false,
-		Message: fmt.Sprintf("logged in user %s", user.Email),
+		Message: fmt.Sprintf("logged in user %v", user.Email),
 		Data:    user,
-	}
-
-	helpers.WriteJson(w, http.StatusAccepted, resp)
+	})
 }

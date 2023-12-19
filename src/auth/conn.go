@@ -31,6 +31,7 @@ func connectToDb() *sql.DB {
 	for {
 		conn, err := openDb(dataSource)
 		if err == nil {
+			log.Println("connected to Db")
 			return conn
 		}
 
@@ -39,6 +40,7 @@ func connectToDb() *sql.DB {
 
 		if connAttempts > 10 {
 			log.Println(err)
+			log.Println("conn attempts exceeded")
 			return nil
 		}
 
