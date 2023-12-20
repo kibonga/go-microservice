@@ -6,4 +6,5 @@ use (
 	./src/auth
 	./src/modules
 	.
+	src/logger
 )
