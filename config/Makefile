@@ -2,6 +2,7 @@
 FRONTEND_BINARY=frontend
 BROKER_BINARY=broker_app
 AUTH_BINARY=auth_app
+LOGGER_BINARY=logger_app
 
 # starts all containers in the background without force build
 up:
@@ -10,7 +11,7 @@ up:
 	@echo "Docker images started"
 
 # stops docker-compose (if running), builds all projects and starts the containers in the background
-up_build: build_broker build_auth
+up_build: build_broker build_auth build_logger
 	@echo "Stopping docker images (if running)"
 	docker-compose down
 	@echo "Building (when required) and starting docker images (detached, force)"
@@ -27,6 +28,12 @@ build_broker:
 	@echo "Building broker app binary..."
 	cd ../src/broker && env CGO_ENABLED=0 go build -o ${BROKER_BINARY} .
 	@echo "Finished building broker app"
+
+# builds the logger app binary as a linux executable
+build_logger:
+	@echo "Building logger app binary..."
+	cd ../src/logger && env CGO_ENABLED=0 go build -o ${LOGGER_BINARY} .
+	@echo "Finished building logger app"
 
 build_auth:
 	@echo "Building auth app binary..."
