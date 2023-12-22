@@ -9,9 +9,20 @@ import (
 	"net/http"
 )
 
+const (
+	AUTH_URL = "http://auth-service:420/auth"
+	LOG_URL  = "http://logger-service:7070/log"
+)
+
 type ReqPayload struct {
 	Action string      `json:"action"`
 	Auth   AuthPayload `json:"auth,omitempty"`
+	Log    LogPayload  `json:"log,omitempty"`
+}
+
+type LogPayload struct {
+	Name string `json:"name"`
+	Data string `json:"data"`
 }
 
 type AuthPayload struct {
@@ -46,18 +57,82 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 	switch reqPayload.Action {
 	case "auth":
 		app.authenticate(w, reqPayload.Auth)
+	case "log":
+		app.logAction(w, reqPayload.Log)
 	default:
 		helpers.ErrorJson(w, errors.New("unknown action"))
 	}
 }
 
+func (app *Config) logAction(w http.ResponseWriter, lp LogPayload) {
+	log.Println("logging action from broker...")
+
+	// Convert payload to json
+	jsonData, _ := json.MarshalIndent(lp, "", "\t")
+
+	// Create new request
+	req, err := http.NewRequest("POST", LOG_URL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		helpers.ErrorJson(w, err)
+		return
+	}
+
+	// Create new HTTP client
+	client := &http.Client{}
+
+	log.Println("making http req...")
+	// Make HTTP request
+	resp, err := client.Do(req)
+	if err != nil {
+		helpers.ErrorJson(w, err)
+		return
+	}
+	log.Println("made http req")
+
+	// Defer closing BODY
+	defer resp.Body.Close()
+
+	log.Println("checking valid status")
+	// Check if response is valid
+	if resp.StatusCode != http.StatusAccepted {
+		helpers.ErrorJson(w, errors.New("failed to log action"))
+		return
+	}
+
+	log.Println("decoding resp")
+	// Decode response
+	var jsonResp helpers.JsonResp
+	decoder := json.NewDecoder(resp.Body)
+	err = decoder.Decode(&jsonResp)
+	if err != nil {
+		helpers.ErrorJson(w, errors.New("failed to decode response"))
+		return
+	}
+
+	log.Println("internal error")
+	// Check for Internal errors
+	if jsonResp.Error {
+		helpers.ErrorJson(w, errors.New(jsonResp.Message))
+		return
+	}
+
+	log.Println("writing log response")
+	// Send back response
+	helpers.WriteJson(w, http.StatusAccepted, &helpers.JsonResp{
+		Error:   false,
+		Message: "action logged",
+		Data:    jsonResp.Data,
+	})
+	log.Println("action logged successfully...")
+}
+
 func (app *Config) authenticate(w http.ResponseWriter, ap AuthPayload) {
-	log.Println("trying to authenticate broker")
+	log.Println("authenticating from broker...")
 	// Convert auth payload to json
 	jsonData, _ := json.MarshalIndent(ap, "", "\t")
 
 	// Call the auth service - Authenticate
-	req, err := http.NewRequest("POST", "http://auth-service:420/auth", bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("POST", AUTH_URL, bytes.NewBuffer(jsonData))
 	if err != nil {
 		helpers.ErrorJson(w, err)
 		return
@@ -94,7 +169,6 @@ func (app *Config) authenticate(w http.ResponseWriter, ap AuthPayload) {
 		return
 	}
 
-	log.Println("finally authenticated")
 	helpers.WriteJson(w, http.StatusAccepted, &helpers.JsonResp{
 		Error:   false,
 		Message: "authenticated",

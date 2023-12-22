@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
+	"os"
 	"time"
 )
 
@@ -35,6 +36,9 @@ func New(mongo *mongo.Client) Models {
 func (l *LogEntry) Insert(entry LogEntry) error {
 	collection := client.Database("logger").Collection("logs")
 
+	log.Println("DB=", os.Getenv("MONGO_INITDB_DATABASE"))
+	log.Println("inserting one")
+	log.Println("collection:", collection)
 	_, err := collection.InsertOne(context.TODO(), LogEntry{
 		Name:      entry.Name,
 		Data:      entry.Data,

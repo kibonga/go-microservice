@@ -60,7 +60,7 @@ services:
     ports:
       - 27018:27018
     environment:
-      MONGO_INITDB_DATABASE: logs
+      MONGO_INITDB_DATABASE: logger
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: assword
     volumes:
