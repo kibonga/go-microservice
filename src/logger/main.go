@@ -17,21 +17,22 @@ const (
 	webPort  = "7070"
 	rpcPort  = "42069"
 	gRpcPort = "69420"
-	mongoUrl = "mongodb://mongo:27018"
+	mongoUrl = "mongodb://mongo:27017"
 )
-
-var client *mongo.Client
 
 type Config struct {
 	Models data.Models
 }
 
+var client *mongo.Client
+
 func main() {
 	// Connect to MongoDb
-	client, err := connectToMongoDb()
+	mongoClient, err := connectToMongoDb()
 	if err != nil {
 		log.Panic(err)
 	}
+	client = mongoClient
 
 	// Create Context in order to disconnect
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
@@ -76,20 +77,23 @@ func connectToMongoDb() (*mongo.Client, error) {
 	// Create conn options
 	clientOpts := options.Client().ApplyURI(mongoUrl)
 	clientOpts.SetAuth(options.Credential{
-		Username: os.Getenv("MONGO_INITDB_ROOT_USERNAME"),
-		Password: os.Getenv("MONGO_INITDB_ROOT_PASSWORD"),
+		Username: "admin",
+		Password: "assword",
 	})
 
 	log.Printf("this is root username: %s", os.Getenv("LOG_USERNAME"))
 	log.Printf("this is root password: %s", os.Getenv("LOG_PASSWORD"))
+	log.Println("client options", clientOpts)
 
-	// Connect
-	conn, err := mongo.Connect(context.TODO(), clientOpts)
+	// Create new Mongo client
+	mongoClient, err := mongo.Connect(context.TODO(), clientOpts)
+	log.Println("this is mongo conn:", mongoClient)
+	log.Println("testing(ping)", mongoClient.Ping(context.TODO(), nil))
 	if err != nil {
 		log.Println("error connecting", err)
 		return nil, err
 	}
 	log.Println("successfully connected to mongo db...")
 
-	return conn, nil
+	return mongoClient, nil
 }
