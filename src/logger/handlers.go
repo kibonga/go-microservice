@@ -38,3 +38,16 @@ func (app *Config) AddLog(w http.ResponseWriter, r *http.Request) {
 
 	helpers.WriteJson(w, http.StatusAccepted, resp)
 }
+
+func (app *Config) All(w http.ResponseWriter, r *http.Request) {
+	log.Println("getting all logs...")
+
+	logs, err := app.Models.LogEntry.All()
+	if err != nil {
+		log.Println("failed to get all logs...")
+		helpers.ErrorJson(w, err)
+		return
+	}
+
+	helpers.WriteJson(w, http.StatusAccepted, logs)
+}

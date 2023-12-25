@@ -23,5 +23,7 @@ func (app *Config) routes() http.Handler {
 
 	mux.Post("/log", app.AddLog)
 
+	mux.Get("/all", app.All)
+
 	return mux
 }

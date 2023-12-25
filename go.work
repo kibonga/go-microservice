@@ -5,6 +5,7 @@ use (
 	./src/frontend
 	./src/auth
 	./src/modules
+	./src/mailer
 	.
 	src/logger
 )
