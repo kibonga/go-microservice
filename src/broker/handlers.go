@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"modules/helpers"
 	"net/http"
@@ -12,12 +13,14 @@ import (
 const (
 	AUTH_URL = "http://auth-service:420/auth"
 	LOG_URL  = "http://logger-service:7070/log"
+	MAIL_URL = "http://mailer-service/send"
 )
 
 type ReqPayload struct {
 	Action string      `json:"action"`
 	Auth   AuthPayload `json:"auth,omitempty"`
 	Log    LogPayload  `json:"log,omitempty"`
+	Mail   MailPayload `json:"mail,omitempty"`
 }
 
 type LogPayload struct {
@@ -28,6 +31,13 @@ type LogPayload struct {
 type AuthPayload struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type MailPayload struct {
+	From    string `json:"from"`
+	To      string `json:"to"`
+	Subject string `json:"subject"`
+	Message string `json:"message"`
 }
 
 func (app *Config) Broker(w http.ResponseWriter, r *http.Request) {
@@ -59,6 +69,9 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 		app.authenticate(w, reqPayload.Auth)
 	case "log":
 		app.logAction(w, reqPayload.Log)
+	case "mail":
+		log.Println("mail handler, send mail from broker switch...")
+		app.sendMail(w, reqPayload.Mail)
 	default:
 		helpers.ErrorJson(w, errors.New("unknown action"))
 	}
@@ -174,4 +187,45 @@ func (app *Config) authenticate(w http.ResponseWriter, ap AuthPayload) {
 		Message: "authenticated",
 		Data:    jsonResp.Data,
 	})
+}
+
+func (app *Config) sendMail(w http.ResponseWriter, mp MailPayload) {
+	log.Println("sending mail from broker service...")
+
+	jsonData, err := json.MarshalIndent(mp, "", "\t")
+	if err != nil {
+		log.Println("failed marshaling mail payload", err)
+		helpers.ErrorJson(w, err)
+		return
+	}
+
+	req, err := http.NewRequest("POST", MAIL_URL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		log.Println("failed creating mailer request...", err)
+		helpers.ErrorJson(w, err)
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println("failed to make mailer request...", err)
+		helpers.ErrorJson(w, err)
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusAccepted {
+		helpers.ErrorJson(w, err)
+		return
+	}
+
+	payload := helpers.JsonResp{
+		Error:   false,
+		Message: fmt.Sprintf("email sent to %s", mp.To),
+	}
+
+	helpers.WriteJson(w, http.StatusAccepted, payload)
 }

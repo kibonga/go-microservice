@@ -7,4 +7,8 @@
     go get github.com/go-chi/cors
 
  // Postgres
- 1. 
+ 1.
+
+
+ // Mailer
+ 1. go get github.com/xhit/go-simple-mail/v2

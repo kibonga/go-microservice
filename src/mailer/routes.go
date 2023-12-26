@@ -4,6 +4,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"log"
 	"net/http"
 )
 
@@ -20,6 +21,12 @@ func (app *Config) routes() http.Handler {
 	}))
 
 	mux.Use(middleware.Heartbeat("/ping"))
+
+	mux.Get("/test", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("test mailer works")
+	}))
+
+	mux.Post("/send", app.SendMail)
 
 	return mux
 }
