@@ -6,6 +6,10 @@ use (
 	./src/auth
 	./src/modules
 	./src/mailer
+	./src/messenger
 	.
 	src/logger
+	src/messenger/consumer
+	src/messenger/publisher
+	src/messenger/common
 )
