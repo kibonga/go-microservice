@@ -9,7 +9,12 @@ use (
 	./src/messenger
 	.
 	src/logger
-	src/messenger/consumer
-	src/messenger/publisher
+	src/messenger/default-queue/consumer
+	src/messenger/default-queue/publisher
+	src/messenger/work-queue/consumer
+	src/messenger/work-queue/publisher
+	src/messenger/work-queue/task-publisher
+	src/messenger/work-queue/task-consumer
+	src/messenger/work-queue
 	src/messenger/common
 )

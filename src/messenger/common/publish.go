@@ -5,7 +5,7 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-func (config *Config) PlainPublish(ctx context.Context, body string) error {
+func (config *AmqpConfig) PlainPublish(ctx context.Context, body string) error {
 	err := config.Channel.PublishWithContext(
 		ctx,
 		"",

@@ -1,13 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"common"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
+	"time"
 )
 
 func main() {
-	var config common.Config
+	var config common.AmqpConfig
 
 	conn, err := amqp.Dial(common.Addr)
 	common.FailOnError(err, "failed to connect to rabbitmq")
@@ -18,18 +20,11 @@ func main() {
 	defer ch.Close()
 	config.Channel = ch
 
-	q, err := config.DeclareQueue("hello")
+	q, err := config.DeclareQueue(common.WorkerQueue)
 	common.FailOnError(err, "failed to declare queue")
 	config.Queue = q
 
-	msgs, err := config.Channel.Consume(
-		config.Queue.Name,
-		"",
-		true,
-		false,
-		false,
-		false,
-		nil)
+	msgs, err := config.RecvMsgs()
 	common.FailOnError(err, "failed to register a consumer")
 
 	var forever chan struct{}
@@ -37,6 +32,10 @@ func main() {
 	go func() {
 		for m := range msgs {
 			log.Printf("received a message: %s", m.Body)
+			dotCount := bytes.Count(m.Body, []byte("."))
+			t := time.Duration(dotCount)
+			time.Sleep(t * time.Second)
+			log.Printf("message is done")
 		}
 	}()
 
