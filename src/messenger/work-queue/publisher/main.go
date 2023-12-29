@@ -75,7 +75,7 @@ func createChannel(config *common.AmqpConfig) {
 func createQueue(config *common.AmqpConfig, name string) {
 	q, err := config.Channel.QueueDeclare(
 		name,
-		false,
+		true,
 		false,
 		false,
 		false,

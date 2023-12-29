@@ -48,7 +48,7 @@ func openChannel(config *common.AmqpConfig) {
 func createQueue(config *common.AmqpConfig, name string) {
 	q, err := config.Channel.QueueDeclare(
 		name,
-		false,
+		true,
 		false,
 		false,
 		false,
@@ -72,8 +72,9 @@ func publishMsg(config *common.AmqpConfig, ctx context.Context, stopCh chan bool
 				false,
 				false,
 				amqp.Publishing{
-					ContentType: "text/plain",
-					Body:        []byte(fmt.Sprintf("%s - %d", msg, count)),
+					DeliveryMode: amqp.Persistent,
+					ContentType:  "text/plain",
+					Body:         []byte(fmt.Sprintf("%s - %d", msg, count)),
 				},
 			)
 			log.Println("message sent")

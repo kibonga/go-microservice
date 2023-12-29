@@ -13,8 +13,9 @@ func (config *AmqpConfig) PlainPublish(ctx context.Context, body string) error {
 		false,
 		false,
 		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte(body),
+			DeliveryMode: amqp.Persistent,
+			ContentType:  "text/plain",
+			Body:         []byte(body),
 		})
 	FailOnError(err, "failed to publish with context")
 	return err

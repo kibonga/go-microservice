@@ -22,6 +22,9 @@ func main() {
 	openChannel(&config)
 	defer config.Channel.Close()
 
+	// Set fair dispatch for channel
+	setFairChannelDispatch(&config)
+
 	// Create Queue
 	createQueue(&config, common.WorkerQueue)
 
@@ -49,7 +52,7 @@ func openChannel(config *common.AmqpConfig) {
 func createQueue(config *common.AmqpConfig, name string) {
 	q, err := config.Channel.QueueDeclare(
 		name,
-		false,
+		true,
 		false,
 		false,
 		false,
@@ -62,7 +65,7 @@ func receiveMessages(config *common.AmqpConfig) <-chan amqp.Delivery {
 	messages, err := config.Channel.Consume(
 		config.Queue.Name,
 		"",
-		true,
+		false,
 		false,
 		false,
 		false,
@@ -81,6 +84,12 @@ func consumeMessages(messages <-chan amqp.Delivery, stopCh chan bool) {
 			log.Printf("received message: %s", m.Body)
 			time.Sleep(time.Millisecond * 600)
 			log.Println("message consumed")
+			m.Ack(false)
 		}
 	}
+}
+
+func setFairChannelDispatch(config *common.AmqpConfig) {
+	err := config.Channel.Qos(1, 0, false)
+	common.FailOnError(err, "failed to set QoS")
 }

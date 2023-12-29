@@ -4,7 +4,7 @@ import amqp "github.com/rabbitmq/amqp091-go"
 
 const (
 	Addr         = "amqp://guest:guest@localhost:5672"
-	WorkerQueue  = "worker_queue"
+	WorkerQueue  = "worker_queue_task"
 	DefaultQueue = "default_queue"
 )
 
